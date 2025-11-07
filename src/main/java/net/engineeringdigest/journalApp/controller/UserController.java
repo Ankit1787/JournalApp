@@ -21,13 +21,13 @@ public class UserController {
     public ResponseEntity<UserEntry> getUser(@PathVariable ObjectId id){
         return userService.getUserById(id);
     }
-    @GetMapping("/add-journal/{id}")
+    @PostMapping("/add-journal/{id}")
     public ResponseEntity<Map<String,Object>> addEntryToUser(@PathVariable ObjectId id,@RequestBody JournalEntry journalEntry){
         return userService.addJournalEntryForUser(id,journalEntry);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserEntry> createUser(@RequestBody UserEntry userEntry){
+    public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserEntry userEntry){
         return userService.saveEntry(userEntry);
     }
     @PutMapping("/update/{id}")

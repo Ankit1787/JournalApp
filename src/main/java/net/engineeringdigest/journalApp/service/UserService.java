@@ -82,18 +82,32 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<UserEntry> saveEntry(UserEntry newEntry){
+    public ResponseEntity<Map<String,Object>> saveEntry(UserEntry newEntry){
+        Map <String,Object> response = new HashMap<>();
         try{
-
-            if(newEntry.getUserName().isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if(newEntry.getPassword().isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if(newEntry.getUserName().isEmpty()) {
+                response.put("message","username already exist");
+                response.put("success",false);
+                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            }
+            if(newEntry.getPassword().isEmpty()) {
+                response.put("message","password required");
+                response.put("success",false);
+                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            }
 
            UserEntry userEntry = userRepo.save(newEntry);
-            return new ResponseEntity<UserEntry>(userEntry,HttpStatus.CREATED);
+            response.put("message","user registered successfully");
+            response.put("success",true);
+            response.put("data",userEntry);
+
+            return new ResponseEntity<>(response,HttpStatus.CREATED);
 
         }
         catch (Exception e){
-            return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            response.put("message","user not created");
+            response.put("success",false);
+            return  new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -116,7 +130,7 @@ public class UserService {
             JournalEntry savedEntry = journalRepository.save(newEntry);
 
             // Link journal entry to user
-            user.getJournalEntry().add(savedEntry);
+            user.getJournalEntry().add(newEntry);
             userRepo.save(user);
 
             response.put("success", true);
