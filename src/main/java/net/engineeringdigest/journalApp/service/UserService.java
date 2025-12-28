@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class UserService {
         Map<String,Object> response = new HashMap<>();
         try {
 
-            if(newEntry.getUserName()==null||newEntry.getUserName().isEmpty()){
+            if(newEntry.getUsername()==null||newEntry.getUsername().isEmpty()){
                 response.put("message","username required");
                 response.put("success",false);
 
@@ -64,7 +65,7 @@ public class UserService {
             }
             UserEntry old = userRepo.findById(id).orElse(null);
             if(old!=null){
-                old.setUserName(newEntry.getUserName());
+                old.setUsername(newEntry.getUsername());
                 old.setPassword(newEntry.getPassword());
                 response.put("message","user created");
                 response.put("success",true);
@@ -85,7 +86,7 @@ public class UserService {
     public ResponseEntity<Map<String,Object>> saveEntry(UserEntry newEntry){
         Map <String,Object> response = new HashMap<>();
         try{
-            if(newEntry.getUserName().isEmpty()) {
+            if(newEntry.getUsername().isEmpty()) {
                 response.put("message","username already exist");
                 response.put("success",false);
                 return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
@@ -111,7 +112,7 @@ public class UserService {
         }
 
     }
-
+     @Transactional
     public ResponseEntity<Map<String, Object>> addJournalEntryForUser(
             ObjectId userId,
              JournalEntry newEntry) {
@@ -131,6 +132,8 @@ public class UserService {
 
             // Link journal entry to user
             user.getJournalEntry().add(newEntry);
+
+            user.setUsername(null);
             userRepo.save(user);
 
             response.put("success", true);

@@ -21,9 +21,10 @@ public class UserEntry {
 
     @Indexed(unique = true)
     @NonNull
-    private  String userName;
+    private  String username;
     @NonNull
     private  String password;
+    private List <String> roles;
     @DBRef
     private List<JournalEntry> journalEntry=new ArrayList<>();
 }
