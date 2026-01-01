@@ -8,12 +8,11 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class UserService {
@@ -22,6 +21,8 @@ public class UserService {
     private UserRepo userRepo;
     @Autowired
     private JournalRepository journalRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public ResponseEntity<UserEntry> getUserById(ObjectId id){
         try {
@@ -96,7 +97,8 @@ public class UserService {
                 response.put("success",false);
                 return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
             }
-
+            newEntry.setPassword(passwordEncoder.encode(newEntry.getPassword()));
+           newEntry.setRoles(Collections.singletonList("USER"));
            UserEntry userEntry = userRepo.save(newEntry);
             response.put("message","user registered successfully");
             response.put("success",true);

@@ -1,4 +1,4 @@
-package net.engineeringdigest.journalApp.service;
+package net.engineeringdigest.journalApp.security;
 
 import net.engineeringdigest.journalApp.entity.UserEntry;
 import net.engineeringdigest.journalApp.entity.UserPrincipal;
